@@ -3,10 +3,9 @@ const cors = require("cors");
 const { connect } = require("mongoose");
 require("dotenv").config();
 const path = require("path");
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-app.use(helmet());
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+//const helmet = require('helmet');
+//const rateLimit = require('express-rate-limit');
+
 
 
 const userRoutes = require("./routes/userRoutes");
@@ -17,8 +16,9 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
-
+app.use(cors({ credentials: true, origin: process.env.HOST_URL }));
+//app.use(helmet());
+//app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/uploads", express.static(__dirname + "/uploads"));
