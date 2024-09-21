@@ -16,7 +16,11 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ credentials: true, origin: process.env.HOST_URL }));
+app.use(cors({
+  credentials: true,
+  origin: process.env.FRONTEND_URL
+}));
+
 //app.use(helmet());
 //app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.static(path.join(__dirname, "public")));
