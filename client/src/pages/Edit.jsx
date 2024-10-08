@@ -204,9 +204,12 @@ const Edit = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full sm:w-2/3 mx-auto rounded-lg px-3 py-2 bg-green-500 hover:bg-green-700 text-white"
+            disabled={isLoading}
+            className={`mt-4 py-2 px-4  rounded-lg text-white w-3/4 mx-auto ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            } transition-colors duration-300 `}
           >
-            Update Post
+            {isLoading ? "Updating..." : "Update Post" }
           </button>
         </form>
       </div>
