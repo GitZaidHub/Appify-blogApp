@@ -36,7 +36,6 @@ const Dashboard = () => {
         );
         setPosts(response?.data);
         
-        console.log(response);
       } catch (error) {
         seterror(error.response.data.message);
       }

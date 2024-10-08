@@ -19,7 +19,6 @@ const CategoryPost = () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/posts/category/${category}`)
         setPosts(response.data)
-        console.log(response)
       } catch (error) {
         seterror(error.response.data.message)
       }

@@ -13,6 +13,7 @@ const Create = () => {
   const [category, setCategory] = useState("Uncategorized");
   const [description, setDescription] = useState("");
   const [thumbnail, setThumbnail] = useState([]);
+  const [loading, setLoading] = useState(false)
   const [error, seterror] = useState("");
 
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ const Create = () => {
     postData.append("thumbnail", file);
     });
 
-    
+    setLoading(true)
       try {
         const response = await axios.post(
           `${import.meta.env.VITE_BASE_URL}/posts/create`,
@@ -118,6 +119,8 @@ const Create = () => {
         } else {
           seterror("An unexpected error occurred.");
         }
+      }finally{
+        setLoading(false)
       }
    
   };
@@ -176,9 +179,12 @@ const Create = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full sm:w-2/3 mx-auto rounded-lg px-3 py-2 bg-green-500 hover:bg-green-700 text-white"
+            disabled={loading}
+            className={`mt-4 py-2 px-4  rounded-lg text-white w-3/4 mx-auto ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            } transition-colors duration-300 `}
           >
-            Create
+            { loading ? "Creating..." : "Create Post"}
           </button>
         </form>
       </div>

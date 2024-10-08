@@ -15,17 +15,20 @@ const Header = () => {
   const [author, setAuthor] = useState([])
 
   useEffect(() => {
-    const getAuthor=async()=>{
+    const getAuthor = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/${currentUser?.id}`)
-        setAuthor(response?.data)
-        console.log(response.data)
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/${currentUser?.id}`);
+        setAuthor(response?.data);
+        console.log(response.data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
+    };
+
+    if (currentUser?.id) {
+      getAuthor(); // Only call if currentUser has a valid id
     }
-    getAuthor()
-  }, [])
+  }, [currentUser?.id]); // Dependency array to fetch author only when currentUser.id changes
 
   const toggleMenu = () => {
     setisMenuOpen(!isMenuOpen);
