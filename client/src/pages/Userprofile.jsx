@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { FaCheck, FaRegEdit } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../lib/firebase" // Import Firebase storage
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { UserContext } from "../context/userContext";
 import { useContext } from "react";
 import axios from "axios";
@@ -56,41 +58,29 @@ const Userprofile = () => {
   const changeAvatar = async () => {
     setAvatartIstouched(false);
     try {
-      const postData = new FormData();
-      postData.set("avatar", avatar);
+      // Firebase storage reference
+      const avatarRef = ref(storage, `avatars/${avatar.name}`);
+      
+      // Upload image to Firebase storage
+      const snapshot = await uploadBytes(avatarRef, avatar);
+      
+      // Get image URL from Firebase storage
+      const downloadURL = await getDownloadURL(snapshot.ref);
+  
+      // Send image URL to backend instead of the file itself
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/users/change-avatar`, // Correct URL without extra character
-        postData,
+        `http://localhost:5000/api/users/change-avatar`,
+        { avatarURL: downloadURL }, // Pass the image URL
         { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
       );
-      setAvatar(response.data.avatar);
-      toast.success(`Avatar changed`, {
-        duration: 4000,
-        position: 'top-center',
-      
-        // Styling
-        style: {},
-        className: '',
-      
-        // Custom Icon
-        icon: '',
-      
-        // Change colors of success/error/loading icon
-        iconTheme: {
-          primary: '#000',
-          secondary: '#fff',
-        },
-      
-        // Aria
-        ariaProps: {
-          role: 'status',
-          'aria-live': 'polite',
-        },
-      });
+      console.log(response)
+      setAvatar(downloadURL); // Update avatar with URL from Firebase
+      toast.success(`Avatar changed`, { duration: 4000, position: "top-center" });
     } catch (error) {
       seterror(error.response.data.message);
     }
   };
+  
 
   const updateDetail = async (e) => {
     e.preventDefault();
@@ -121,104 +111,100 @@ const Userprofile = () => {
   };
 
   return (
-    <div className="min-h-screen  bg-gray-100 bg-opacity-40 flex flex-col justify-center items-center">
-      <h1 className="text-2xl font-semibold mb-8 text-center">My Profile</h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-300 flex flex-col justify-center items-center py-10">
+      <h1 className="text-3xl font-bold mb-8 text-gray-800 text-center">
+        My Profile
+      </h1>
 
       {error && (
-        <p className="text-md font-semibold mb-8 text-red-900 text-center">
+        <p className="text-sm font-semibold mb-8 text-red-600 text-center">
           {error}
         </p>
       )}
 
-      <section className="userprofile container flex flex-col md:flex-row items-center md:gap-24 justify-center w-full mx-auto md:w-4/5 bg-white bg-opacity-25 rounded-xl p-4">
+      <section className="userprofile container flex flex-col md:flex-row items-center md:gap-12 justify-center w-full max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8">
         {/* Avatar Section */}
-        <div className="flex flex-col items-center justify-center mb-8 md:mb-0">
+        <div className="flex flex-col items-center justify-center mb-8 md:mb-0 relative">
           <img
-            className="rounded-full w-24 h-24 md:w-48 md:h-48 object-cover"
-            src={`${import.meta.env.VITE_BASE_URL_ASSETS}/uploads/${avatar}`}
+            className="rounded-full w-32 h-32 md:w-48 md:h-48 object-cover border-4 border-gray-300 shadow-md"
+            src={avatar}
             alt="Avatar"
           />
-          <p className="mt-2 text-lg font-semibold">{name}</p>
-          <Link to={`/mypost/${id}`}>
-            <button className="mt-4 px-4 py-2 bg-gray-600 text-white rounded-xl hover:bg-gray-800">
-              My Posts
-            </button>
-          </Link>
-        </div>
-
-        {/* Edit Icon */}
-        <form className="absolute top-[270px] left-[250px] lg:top-[480px] lg:left-[450px] bg-white p-3 rounded-full shadow-md hover:bg-gray-200 transition">
+          <label
+            htmlFor="avatar"
+            className="absolute top-4 right-4 md:top-6 md:right-6 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition cursor-pointer"
+            onClick={() => setAvatartIstouched(true)}
+          >
+            <FaRegEdit className="text-gray-600 text-lg" />
+          </label>
           <input
             className="hidden"
             type="file"
             name="avatar"
             id="avatar"
-            accept="png, jpeg, jpg"
+            accept="image/png, image/jpeg, image/jpg"
             onChange={(e) => setAvatar(e.target.files[0])}
           />
-
-          <label
-            htmlFor="avatar"
-            className=""
-            onClick={() => setAvatartIstouched(true)}
-          >
-            <FaRegEdit />
-          </label>
-        </form>
-        {avatartIstouched && (
-          <button
-            onClick={changeAvatar}
-            className=" absolute top-[270px] left-[220px] lg:top-[480px] lg:left-[450px] bg-white p-3 rounded-full shadow-md hover:bg-gray-200 transition"
-          >
-            <FaCheck className="text-green-600 size-2 md:size-4" />
-          </button>
-        )}
+          {avatartIstouched && (
+            <button
+              onClick={changeAvatar}
+              className="absolute bottom-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm hover:bg-green-600 transition"
+            >
+              <FaCheck className="inline-block mr-1" /> Save
+            </button>
+          )}
+          <p className="mt-4 text-lg font-semibold text-gray-800">{name}</p>
+          <Link to={`/mypost/${id}`}>
+            <button className="mt-4 px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition">
+              My Posts
+            </button>
+          </Link>
+        </div>
 
         {/* Form Section */}
         <form
-          className="flex flex-col w-full md:w-1/2 space-y-4"
+          className="flex flex-col w-full md:w-1/2 space-y-5"
           onSubmit={updateDetail}
         >
           <input
-            className="rounded-lg p-3 w-full border border-gray-300 focus:ring-2 focus:ring-gray-400"
+            className="rounded-lg px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none"
             type="text"
-            placeholder="User name"
+            placeholder="User Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
           <input
-            className="rounded-lg p-3 w-full border border-gray-300 focus:ring-2 focus:ring-gray-400"
+            className="rounded-lg px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none"
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
-            className="rounded-lg p-3 w-full border border-gray-300 focus:ring-2 focus:ring-gray-400"
+            className="rounded-lg px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none"
             type="password"
             placeholder="Current Password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
           />
           <input
-            className="rounded-lg p-3 w-full border border-gray-300 focus:ring-2 focus:ring-gray-400"
+            className="rounded-lg px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none"
             type="password"
             placeholder="New Password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
           />
           <textarea
-            className="rounded-lg p-3 w-full h-24 border border-gray-300 focus:ring-2 focus:ring-gray-400"
+            className="rounded-lg px-4 py-3 border border-gray-300 focus:ring-2 focus:ring-gray-400 focus:outline-none"
             placeholder="Bio"
             value={bio}
-            name="bio"
             onChange={(e) => setBio(e.target.value)}
           />
           <button
             type="submit"
-            className="px-4 py-2 rounded-xl bg-gray-600 text-white w-1/3 mx-auto hover:bg-gray-800"
+            className="px-6 py-3 rounded-lg bg-gray-800 text-white w-1/2 mx-auto hover:bg-gray-900 transition"
           >
-            Edit
+            Save Changes
           </button>
         </form>
       </section>

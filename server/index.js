@@ -1,12 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const { connect } = require("mongoose");
+const fs = require("fs")
 require("dotenv").config();
 const path = require("path");
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-
-
 
 const userRoutes = require("./routes/userRoutes");
 const PostRoutes = require("./routes/postRoutes");
@@ -16,12 +13,21 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ credentials: true, origin: "https://appify-blogapp.netlify.app" }));
-app.use(helmet());
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(cors({
+  credentials: true,
+  origin: process.env.FRONTEND_URL 
+}));
 
-app.use("/uploads", express.static(__dirname + "/uploads"));
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+}
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "/uploads")));
+app.use("/uploads", express.static(uploadsDir));
 
 app.use("/api/users", userRoutes);
 app.use("/api/posts", PostRoutes);

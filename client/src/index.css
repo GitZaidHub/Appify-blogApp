@@ -17,3 +17,23 @@
     animation: slideInLeft 1.5s ease-out forwards;
   }
   
+  body {
+    background: linear-gradient(to bottom right, rgba(147, 139, 139, 0.519), rgba(200, 200, 200, 0.563)), 
+    url('your-image-url.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 0;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white for cards */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+}

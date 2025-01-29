@@ -22,7 +22,6 @@ const Dashboard = () => {
   }, []);
 
   const { id } = useParams();
-
   useEffect(() => {
     const fetchposts = async () => {
       setIsLoading(true);
@@ -49,38 +48,44 @@ const Dashboard = () => {
   return (
     <>
      
-    <section className="dashboard flex flex-col gap-2 container h-[80vh] px-1  md:px-4 mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-      {posts.map((post) => (
-        <div
-          key={post._id}
-          className="flex justify-between items-center bg-white bg-opacity-30 p-4 rounded-lg shadow-md"
-        >
-          <div className="flex items-center gap-1 md:gap-4">
-            <img
-              src={`${import.meta.env.VITE_BASE_URL_ASSETS}/uploads/${
-                post.thumbnail[0]
-              }`}
-              alt="avatar"
-              className="h-12 w-12 rounded-full object-cover"
-            />
-            <p className="font-semibold">{post.title}</p>
-          </div>
-          <div className="flex items-center justify-center gap-2">
-            <div className="flex gap-1">
+    <section className="dashboard flex flex-col gap-4 container h-auto px-2 md:px-4 mx-auto pb-10">
+  <h1 className="lg:text-4xl md:text-3xl text-xl font-bold mb-6 text-center">Dashboard</h1>
+  {posts.map((post) => (
+    <div
+      key={post._id}
+      className="flex justify-between items-center bg-white bg-opacity-90 p-4 rounded-lg shadow-md transition-transform transform hover:shadow-lg duration-300"
+    >
+      <div className="flex flex-col md:flex-row items-center gap-3">
 
-            <Link to={`/post/${post._id}`}><button className="text-gray-900 bg-white bg-opacity-50 border border-gray-300 focus:outline-none hover:bg-yellow-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-xl text-sm md:px-5 px-2 md:py-2.5 py-1 mr-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-              View
-            </button></Link>
-            <Link to={`/posts/${post._id}/edit`} > <button className="text-gray-900 bg-white bg-opacity-50 border border-gray-300 focus:outline-none hover:bg-pink-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-xl text-sm md:px-5 px-2 md:py-2.5 py-1 mr-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-              Edit
-            </button></Link>
-              <Delete postID={post._id}/>
-            </div>
+        {post.thumbnail[0] ? (
+          <img
+            src={post.thumbnail[0]}
+            alt="posts"
+            className="h-14 w-14 rounded-full object-cover border-2 border-gray-300"
+          />
+        ) : (
+          <div className="h-14 w-14 rounded-full bg-gray-200 flex justify-center items-center border-2 border-gray-300">
+            <p className="text-gray-500">No Image</p>
           </div>
-        </div>
-      ))}
-    </section>
+        )}
+        <p className="font-semibold md:text-lg text-md">{post.title}</p>
+      </div>
+      <div className="flex items-center justify-center gap-3">
+        <Link to={`/post/${post._id}`}>
+          <button className="text-gray-900 bg-white bg-opacity-70 border border-gray-300 focus:outline-none hover:bg-yellow-300 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm md:px-4 px-3 md:py-2 py-1 transition duration-200">
+            View
+          </button>
+        </Link>
+        <Link to={`/posts/${post._id}/edit`}>
+          <button className="text-gray-900 bg-white bg-opacity-70 border border-gray-300 focus:outline-none hover:bg-pink-300 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm md:px-4 px-3 md:py-2 py-1 transition duration-200">
+            Edit
+          </button>
+        </Link>
+        <Delete postID={post._id} />
+      </div>
+    </div>
+  ))}
+</section>
     </>
 
   );

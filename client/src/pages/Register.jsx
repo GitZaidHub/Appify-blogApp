@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 import { FaRegEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 
@@ -47,6 +48,7 @@ const Register = () => {
         seterror("can not register !");
       }
       if (!error) {
+        toast.success("Check your email for verification");
         navigate("/login");
       }
     } catch (error) {

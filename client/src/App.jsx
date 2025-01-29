@@ -38,7 +38,7 @@ function App() {
     },
   }}
   />
-    <div className=" bg-[#64748b]">
+    <div className="">
       
       <Header authorID={authorID}/>
       <Outlet setAuthorID={setAuthorID} />

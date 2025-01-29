@@ -29,15 +29,15 @@ const PostAuthor = ({createdAt,authorID}) => {
   
   return (
     
-    <Link className="flex items-center gap-2 mr-3" to={`/posts/users/${authorID}`} >
-    <div className="avatar">
-        <img className="rounded-full size-11" src={`${import.meta.env.VITE_BASE_URL_ASSETS}/uploads/${author?.avatar}`} alt="avatar" />
-    </div>
-    <div className="author-detal">
-    <p className="font-serif">{author?.name} </p>
-    <p className="font-thin" ><ReactTimeAgo date={new Date(createdAt)} locale="en-US" /></p>
-    </div>
-  </Link>
+    <Link className="flex items-center gap-2 mr-3" to={`/posts/users/${authorID}`}>
+  <div className="avatar">
+    <img className="rounded-full w-11 h-11 object-cover" src={author?.avatar} alt="avatar" />
+  </div>
+  <div className="author-detail">
+    <p className="font-serif text-sm">{author?.name}</p>
+    <p className="font-thin text-xs"><ReactTimeAgo date={new Date(createdAt)} locale="en-US" /></p>
+  </div>
+</Link>
 
   );
 };
