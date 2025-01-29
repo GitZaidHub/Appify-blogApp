@@ -69,7 +69,7 @@ const Userprofile = () => {
   
       // Send image URL to backend instead of the file itself
       const response = await axios.post(
-        `http://localhost:5000/api/users/change-avatar`,
+        `${import.meta.env.VITE_BASE_URL}/users/change-avatar`,
         { avatarURL: downloadURL }, // Pass the image URL
         { withCredentials: true, headers: { Authorization: `Bearer ${token}` } }
       );
@@ -95,7 +95,7 @@ const Userprofile = () => {
 
     try {
     const response = await axios.patch(
-      `http://localhost:5000/api/users/edit-user`,
+      `${import.meta.env.VITE_BASE_URL}/users/edit-user`,
       userData,
       { withCredentials: true, headers: { authorization: `Bearer ${token}` } }
     );
